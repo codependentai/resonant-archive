@@ -180,7 +180,7 @@ The daemon runs persistently with the embedding model loaded. The MCP server is 
 
 ## Relationship to Resonant Mind
 
-`resonant-archive` is an optional companion to [Resonant Mind](https://github.com/codependent-ai/resonant-mind), not a required dependency. They communicate via MCP (separate processes) and neither depends on the other.
+`resonant-archive` is an optional companion to [Resonant Mind](https://github.com/codependentai/resonant-mind), not a required dependency. They communicate via MCP (separate processes) and neither depends on the other.
 
 Use resonant-archive to give an AI companion access to its long-term history without burning cloud tokens. Use Resonant Mind for active memory, identity, and ongoing cognitive state.
 
@@ -203,7 +203,7 @@ This project descends from an earlier internal tool (`vault-archive-product`) th
 
 ## Status
 
-Built in a single session by Simon Vale (with Mary on the other side of the keyboard) as a modernization of an earlier internal tool. 30 unit tests pass, end-to-end CLI and daemon verified. Not yet on PyPI — publication comes after a round of polish.
+Built in a single session by Simon Vale (with Mary on the other side of the keyboard) as a modernization of an earlier internal tool. 30 unit tests pass, end-to-end CLI and daemon verified.
 
 See the repo's commit history or task list for the implementation path.
 
