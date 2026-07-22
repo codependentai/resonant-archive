@@ -226,6 +226,29 @@ def test_list_namespaces(
     assert ns_counts.get("ns-b") == 1
 
 
+def test_list_namespaces_paginates(
+    tmp_store: ArchiveStore, embedder: Embedder
+) -> None:
+    tmp_store.add_chunks(
+        _make_chunks(["a", "b", "c"], "one.md"),
+        namespace="ns-a",
+        embedder=embedder,
+    )
+    tmp_store.add_chunks(
+        _make_chunks(["d", "e"], "two.md"),
+        namespace="ns-b",
+        embedder=embedder,
+    )
+    expected = {"ns-a": 3, "ns-b": 2}
+    # Page smaller than the collection: counts survive the walk.
+    assert tmp_store.list_namespaces(batch_size=2) == expected
+    # Page size divides the collection exactly: the trailing empty page
+    # must end the walk without double-counting.
+    assert tmp_store.list_namespaces(batch_size=5) == expected
+    # Default page size: unchanged behaviour on small collections.
+    assert tmp_store.list_namespaces() == expected
+
+
 # ---------------------------------------------------------------------------
 # Idempotency
 # ---------------------------------------------------------------------------

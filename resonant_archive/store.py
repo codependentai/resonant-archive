@@ -86,19 +86,32 @@ class ArchiveStore:
         )
         return len(result.get("ids") or [])
 
-    def list_namespaces(self) -> dict[str, int]:
+    def list_namespaces(self, batch_size: int = 2000) -> dict[str, int]:
         """Return a ``{namespace: chunk_count}`` mapping for all namespaces.
 
-        Walks the full collection metadata once; for very large indexes this
-        could be slow. Namespace bookkeeping is a v2 optimization if needed.
+        Walks the full collection metadata in batches to avoid SQLite
+        variable limits on large indexes. Namespace bookkeeping is a v2
+        optimization if needed.
         """
-        result = self._collection.get(include=["metadatas"])
         counts: dict[str, int] = {}
-        for meta in result.get("metadatas") or []:
-            if not meta:
-                continue
-            ns = meta.get("namespace", "<unnamed>")
-            counts[ns] = counts.get(ns, 0) + 1
+        offset = 0
+        while True:
+            result = self._collection.get(
+                include=["metadatas"],
+                limit=batch_size,
+                offset=offset,
+            )
+            metadatas = result.get("metadatas") or []
+            if not metadatas:
+                break
+            for meta in metadatas:
+                if not meta:
+                    continue
+                ns = meta.get("namespace", "<unnamed>")
+                counts[ns] = counts.get(ns, 0) + 1
+            if len(metadatas) < batch_size:
+                break
+            offset += batch_size
         return counts
 
     # -- writes --------------------------------------------------------------
